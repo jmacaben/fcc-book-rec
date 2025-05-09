@@ -1,1 +1,3 @@
-# fcc-book-rec
+# Book Recommendation Engine using KNN (WIP)
+
+From freeCodeCamp
