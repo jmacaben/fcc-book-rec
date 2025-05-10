@@ -24,7 +24,7 @@ A book recommendation project built with scikit-learn, pandas, and SciPy that us
 
 ## 🚀 Future Improvements
 
-- **Content-Based Filtering**: This recommendation system is based purely on collaborative filtering, not content. That means the model doesn’t analyze what a book is about — it only looks at patterns in user ratings. For example, if several users rated 'Twilight' and 'Interview with the Vampire' highly, the model infers they are similar — even though it doesn't "know" they're both vampire novels. The recommendations are driven by user behavior, not book descriptions, genres, or themes. Adding data like genre, author, or keywords could help the model make smarter recommendations, especially for lesser-known books with fewer ratings.
+- **Content-Based Filtering**: This recommendation system is based purely on collaborative filtering, not content. That means the model doesn’t analyze what a book is about — it only looks at patterns in user ratings. For example, if several users rated 'Twilight' and 'Interview with the Vampire' highly, the model infers they are similar, even though it doesn't "know" they're both vampire novels. The recommendations are driven by user behavior, not book descriptions, genres, or themes. Adding data like genre, author, or keywords could help the model make smarter recommendations, especially for lesser-known books with fewer ratings.
 
 
 
