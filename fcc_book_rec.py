@@ -10,6 +10,7 @@ import os
 import zipfile
 import requests
 
+
 # Cell 2 (given)
 url = "https://cdn.freecodecamp.org/project-data/books/book-crossings.zip"
 zip_path = "book-crossings.zip"
@@ -31,6 +32,7 @@ with zipfile.ZipFile(zip_path, 'r') as zip_ref:
 books_filename = 'BX-Books.csv'
 ratings_filename = 'BX-Book-Ratings.csv'
 
+
 # Cell 3 (given)
 # Import csv data into dataframes
 df_books = pd.read_csv(
@@ -50,3 +52,62 @@ df_ratings = pd.read_csv(
     names=['user', 'isbn', 'rating'],
     usecols=['user', 'isbn', 'rating'],
     dtype={'user': 'int32', 'isbn': 'str', 'rating': 'float32'})
+
+
+# My code
+user_rating_counts = df_ratings['user'].value_counts()
+users_to_keep = user_rating_counts[user_rating_counts > 200].index
+book_rating_counts = df_ratings['isbn'].value_counts()
+books_to_keep = book_rating_counts[book_rating_counts > 100].index
+
+df_ratings = df_ratings[df_ratings['user'].isin(users_to_keep)]
+df_ratings = df_ratings[df_ratings['isbn'].isin(books_to_keep)]
+
+
+df_merged = pd.merge(right=df_ratings, left=df_books, on="isbn")
+
+df_cleaned = df_merged.drop_duplicates(["title", "user"])
+
+df_pivot = df_cleaned.pivot(index='title', columns='user', values='rating').fillna(0)
+
+matrix = df_pivot.values
+
+model_knn=NearestNeighbors(metric='cosine',algorithm='brute')
+model_knn.fit(matrix)
+
+# function to return recommended books - this will be tested
+def get_recommends(book = ""):
+    x=df_pivot.loc[book].array.reshape(1, -1)
+    distances,indices=model_knn.kneighbors(x,n_neighbors=6)
+    R_books=[]
+    for distance,indice in zip(distances[0],indices[0]):
+       if distance!=0:
+          R_book=df_pivot.index[indice]
+          R_books.append([R_book,distance])
+         
+    recommended_books=[book,R_books[::-1]]
+    return recommended_books
+
+
+# Cell 5 (given)
+books = get_recommends("Where the Heart Is (Oprah's Book Club (Paperback))")
+print(books)
+
+def test_book_recommendation():
+  test_pass = True
+  recommends = get_recommends("Where the Heart Is (Oprah's Book Club (Paperback))")
+  if recommends[0] != "Where the Heart Is (Oprah's Book Club (Paperback))":
+    test_pass = False
+  recommended_books = ["I'll Be Seeing You", 'The Weight of Water', 'The Surgeon', 'I Know This Much Is True']
+  recommended_books_dist = [0.8, 0.77, 0.77, 0.77]
+  for i in range(2):
+    if recommends[1][i][0] not in recommended_books:
+      test_pass = False
+    if abs(recommends[1][i][1] - recommended_books_dist[i]) >= 0.05:
+      test_pass = False
+  if test_pass:
+    print("You passed the challenge! 🎉🎉🎉🎉🎉")
+  else:
+    print("You haven't passed yet. Keep trying!")
+
+test_book_recommendation()
